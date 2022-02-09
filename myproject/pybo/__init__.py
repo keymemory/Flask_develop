@@ -1,9 +1,11 @@
-import imp
-from re import A
-from flask import Flask
+from distutils import extension
+from multiprocessing.spawn import import_main_path
+from operator import imod
+from flask import Flask, render_template
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import MetaData
+from flaskext.markdown import Markdown
 
 import config
 
@@ -22,6 +24,10 @@ db = SQLAlchemy(metadata=MetaData(naming_convention=naming_convention))
 migrate = Migrate()
 
 
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(config)
@@ -37,16 +43,24 @@ def create_app():
 
 
     # blueprint
-    from .views import main_views, question_views, answer_views, auth_views, comment_views
+    from .views import main_views, question_views, answer_views, auth_views, comment_views, vote_views
     app.register_blueprint(main_views.bp)
     app.register_blueprint(question_views.bp)
     app.register_blueprint(answer_views.bp)
     app.register_blueprint(auth_views.bp)
     app.register_blueprint(comment_views.bp)
+    app.register_blueprint(vote_views.bp)
+
+    # 오류 페이지
+    app.register_error_handler(404,page_not_found)
+
     app.config['SECRET_KEY'] = 'any secret string'
 
     # 필터
     from .filter import format_datetime
     app.jinja_env.filters['datetime'] = format_datetime
+
+    # markdown
+    Markdown(app, extensions=['nl2br', 'fenced_code'])
 
     return app

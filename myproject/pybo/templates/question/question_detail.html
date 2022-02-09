@@ -19,7 +19,7 @@
         <div class="col-11"> <!-- 질문영역 -->
             <div class="card">
                 <div class="card-body">
-                    <div class="card-text" style="white-space: pre-line;">{{ question.content }}</div>
+                    <div class="card-text" style="white-space: pre-line;">{{ question.content|markdown }}</div>
                     <div class="d-flex justify-content-end">
                         {% if question.modify_date %}
                         <div class="badge badge-light p-2 text-left mx-3">
@@ -81,6 +81,7 @@
 
     <h5 class="border-bottom my-3 py-2">{{ question.answer_set|length }}개의 답변이 있습니다.</h5>
     {% for answer in question.answer_set %}
+    <a name="answer_{{ answer.id }}"></a>
     <div class="row my-3">
         <div class="col-1">  <!-- 추천영역 -->
             <div class="bg-light text-center p-3 border font-weight-bolder mb-1">{{ answer.voter|length }}</div>
@@ -91,7 +92,7 @@
         <div class="col-11">  <!-- 답변영역 -->
             <div class="card">
                 <div class="card-body">
-                    <div class="card-text" style="white-space: pre-line;">{{ answer.content }}</div>
+                    <div class="card-text" style="white-space: pre-line;">{{ answer.content|markdown }}</div>
                     <div class="d-flex justify-content-end">
                         {% if answer.modify_date %}
                         <div class="badge badge-light p-2 text-left mx-3">
